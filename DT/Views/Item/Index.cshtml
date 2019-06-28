@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<form id="frm-example">
+    <div class="table-responsive">
+        <table id="ItensTable" class="table table-striped table-bordered table-hover"></table>
+        @*<a asp-action="GetIds">Edit</a>*@
+        <p><button>Submit</button></p>
+        <input type="button" id="xxx" value="CCC">
+        <pre id="example-console-rows"></pre>
+    </div>
+</form>
+
+
+
+
+
+@section styles{
+    <link rel="stylesheet" href="~/css/datatables.min.css" />
+    <link rel="stylesheet" href="~/css/dataTables.checkboxes.css" />
+}
+
+@section scripts{
+    <script type="text/javascript" src="~/js/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/datatables.min.js"></script>
+    <script type="text/javascript" src="~/js/dataTables.checkboxes.min.js"></script>
+
+
+    <script>
+        var rows_selected_total = [];
+
+        $(document).ready(function() {
+            carregarDataTable();
+
+
+        });
+
+        //var rows_selected = [];
+
+        function carregarDataTable() {
+
+            var table = $("#ItensTable")
+                .DataTable({
+                    //"processing": true,
+                    //"serverSide": true,
+                    "info": true,
+                    "filter": false,
+                    "bdestroy": true,
+                    "cache": false,
+                    "async": false,
+                    "ajax": {
+                        "url": "/Item/ListItens",
+                        "method": "POST"
+                    },
+                    "columnDefs": [
+                         {
+                            "targets": 0,
+                             'render': function(data, type, row, meta){
+                                if(type === 'display'){
+                                    data = '<div class="checkbox"><input type="checkbox" name="select_all" id="example-select-all" class="dt-checkboxes"><label></label></div>';
+                                }
+
+                                return data;
+                            },
+                            "checkboxes": {
+                                "selectRow": true,
+                                'selectAllRender': '<div class="checkbox"><input type="checkbox" name="select_all" id="example-select-all" class="dt-checkboxes"><label></label></div>'
+                            }
+                         }
+                    ],
+                    'select': {
+                         'style': 'multi'
+                    },
+                    "columns": [
+                        { "title": "Item id", "data": "itemId", "width": "5%" },
+                        { "title": "Nome", "data": "nome" },
+                        { "title": "Descripção", "data": "descricao" }
+                    ],
+                    "ordering": true,
+                    "paging": true,
+                    "pagingType": "full_numbers",
+                    "pageLength": 10
+                });
+
+            $('#ItensTable tbody').on( 'click', 'tr', function () {
+                $(this).toggleClass('selected');
+            });
+
+            $('#frm-example').on('submit', function(e){
+                var rows_selected = table.column(0).checkboxes.selected();
+                $('#example-console-rows').text(rows_selected.join(",")); 
+                e.preventDefault();
+            });
+
+            $('#')
+        }
+
+    </script>
+
+}
